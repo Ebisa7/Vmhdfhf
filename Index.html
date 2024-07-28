@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Circle Tapping Game</title>
+<link rel="stylesheet" href="style.css"> <!-- Link to external CSS -->
+</head>
+<body>
+<div id="score"><span id="scoreValue">0</span></div>
+<div id="level">🥉 Bronze</div>
+<div id="circle" ontouchstart="tapCircle(event)"></div>
+<div id="batteryText"></div>
+<div id="batteryContainer">
+    <div id="battery" style="width: 100%;"></div>
+</div>
+<div id="dock">
+    <button class="dockButton" onclick="window.location.href='earn.html'">
+        💰<span>Earn</span>
+    </button>
+    <button class="dockButton" onclick="window.location.href='boost.html'">
+        🚀<span>Boost</span>
+    </button>
+    <button class="dockButton" onclick="window.location.href='friend.html'">
+        👥<span>Friends</span>
+    </button>
+    <button class="dockButton" onclick="window.location.href='wallet.html'">
+        👛<span>Wallet</span>
+    </button>
+</div>
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="script.js"></script> <!-- Link to external JavaScript -->
+</body>
+                                                </html>
+  
