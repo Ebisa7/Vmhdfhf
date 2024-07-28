@@ -16,7 +16,7 @@ body {
     width: 80vw; /* Adjusted to fit the width of a mobile device */
     height: 80vw; /* Adjusted to fit the width of a mobile device */
     border-radius: 50%;
-    background-image: url('images/photo_2024-06-22_10-15-30.jpg'); /* Image background */
+    background-image: url('photo_2024-06-22_10-15-30.jpg'); /* Image background */
     background-size: cover; /* Ensure the image covers the circle */
     cursor: pointer;
     position: relative;
