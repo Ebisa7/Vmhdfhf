@@ -1,0 +1,121 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, black, #cd7f32); /* Default bronze gradient background */
+    overflow: hidden; /* Prevent scrolling */
+    padding: 0 10px;
+    background-color: #000; /* Ensures black background for Telegram app */
+}
+
+#circle {
+    width: 80vw; /* Adjusted to fit the width of a mobile device */
+    height: 80vw; /* Adjusted to fit the width of a mobile device */
+    border-radius: 50%;
+    background-image: url('images/photo_2024-06-22_10-15-30.jpg'); /* Image background */
+    background-size: cover; /* Ensure the image covers the circle */
+    cursor: pointer;
+    position: relative;
+    margin-bottom: 20px;
+    transition: transform 0.2s; /* For 3D effect and bounce animation */
+}
+
+#circle:active {
+    transform: scale(0.98); /* Subtle bounce effect */
+}
+
+#score {
+    font-size: 40px;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 10px;
+}
+
+#level {
+    font-size: 18px;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 10px;
+}
+
+.flyingNumber {
+    position: absolute;
+    font-size: 35px;
+    color: #ffffff;
+    animation: flyAndFadeUp 0.1s ease-out forwards; /* Faster animation */
+}
+
+@keyframes flyAndFadeUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px); /* Subtle animation */
+    }
+}
+
+#batteryContainer {
+    width: 80vw; /* Fixed width for battery bar */
+    height: 20px; /* Fixed height for battery bar */
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    margin-top: 10px;
+    overflow: hidden; /* To hide overflow of battery */
+    position: relative;
+}
+
+#battery {
+    height: 100%;
+    background: yellow; /* Yellow color for battery */
+}
+
+#batteryText {
+    position: absolute;
+    top: -25px;
+    left: 0;
+    font-size: 16px;
+    color: #ffffff;
+}
+
+#dock {
+    display: flex;
+    justify-content: space-between; /* Adjusted for responsive design */
+    align-items: center;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(50px);
+    border-radius: 20px;
+    padding: 10px;
+    position: fixed; /* Fixed position at the bottom */
+    bottom: 10px;
+    left: 0;
+    width: 100vw; /* Full width */
+}
+
+.dockButton {
+    font-size: 14px;
+    padding: 10px;
+    margin: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    opacity: 0.8;
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1; /* Equal button sizes */
+}
+
+.dockButton span {
+    font-size: 12px;
+}
