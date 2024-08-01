@@ -2,9 +2,9 @@ let coin = parseInt(localStorage.getItem("circleGameCoin")) || 0;
 let boostFactor = parseInt(localStorage.getItem("circleGameBoostFactor")) || 1;
 let battery = parseInt(localStorage.getItem("circleGameBattery")) || 1000;
 let maxBattery = parseInt(localStorage.getItem("circleGameMaxBattery")) || 1000;
-let verified = JSON.parse(localStorage.getItem("circleGameVerified")) || false;
 
 function checkVerification() {
+    let verified = JSON.parse(localStorage.getItem("circleGameVerified")) || false;
     if (!verified) {
         window.location.href = 'verify.html'; // Redirect to verification page if not verified
     }
@@ -21,6 +21,7 @@ function updateScore() {
 }
 
 function tapCircle(event) {
+    let verified = JSON.parse(localStorage.getItem("circleGameVerified")) || false;
     if (!verified) {
         checkVerification();
         return;
@@ -121,8 +122,15 @@ function updateLevel() {
 
 setInterval(recoverBattery, 1000); // Recover 1 battery per second
 
+function initializeRecaptcha() {
+    // Display reCAPTCHA when the page loads
+    grecaptcha.execute();
+}
+
 // Initial setup
 checkVerification(); // Ensure user is verified before loading the game
+updateScore();
+initializeRecaptcha();
 
 // Telegram API integration (simplified example)
 window.Telegram.WebApp.onEvent('mainButtonClicked', function() {
@@ -131,5 +139,5 @@ window.Telegram.WebApp.onEvent('mainButtonClicked', function() {
 
 function syncWithTelegram() {
     // Your code to synchronize data with Telegram
-    }
-                                               
+                                               }
+        
