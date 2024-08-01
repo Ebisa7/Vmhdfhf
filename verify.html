@@ -33,11 +33,8 @@
         font-size: 16px;
         margin-bottom: 20px;
     }
-    #captchaContainer {
-        margin-top: 20px;
-    }
     #loading {
-        font-size: 14px;
+        font-size: 16px;
         margin-bottom: 20px;
         display: flex;
         align-items: center;
@@ -46,8 +43,8 @@
         border: 4px solid #f3f3f3; /* Light grey */
         border-top: 4px solid #3498db; /* Blue */
         border-radius: 50%;
-        width: 20px;
-        height: 20px;
+        width: 30px; /* Increased size for better visibility */
+        height: 30px; /* Increased size for better visibility */
         animation: spin 1s linear infinite;
         margin-left: 10px;
     }
@@ -55,11 +52,17 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
+    #captchaContainer {
+        margin-top: 20px;
+    }
 </style>
 </head>
 <body>
 <div id="header">Telecn.io</div>
-<div id="message">Verifying you're a human. This should take a sec.<span class="spinner"></span></div>
+<div id="message">Verifying you're a human. This should take a sec.</div>
+<div id="loading">
+    <div class="spinner"></div> <!-- Visible loading animation -->
+</div>
 <div id="captchaContainer" class="g-recaptcha" data-sitekey="6LfFxxwqAAAAAI8N0YR283BDxB0-ItzStv8OY2um"></div>
 
 <script>
@@ -92,5 +95,4 @@ grecaptcha.ready(function() {
 });
 </script>
 </body>
-    </html>
-    
+</html>
