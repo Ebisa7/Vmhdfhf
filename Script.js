@@ -126,7 +126,7 @@ function needsVerification() {
 
 function initializeRecaptcha() {
     grecaptcha.ready(function() {
-        grecaptcha.execute('YOUR_SITE_KEY', {action: 'homepage'}).then(function(token) {
+        grecaptcha.execute('CHECKBOX', {action: 'homepage'}).then(function(token) {
             verifyRecaptcha(token);
         });
     });
