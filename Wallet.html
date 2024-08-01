@@ -8,9 +8,25 @@
     <script src="https://cdn.jsdelivr.net/npm/@ton-web/ton-connect@latest/dist/ton-connect.min.js"></script>
 </head>
 <body>
+    <button id="back-button" class="back-button">Back</button>
     <button id="connect-wallet" class="wallet-button">Connect Ton Wallet</button>
 
     <script>
+        // Function to update background based on level in local storage
+        function updateBackground() {
+            const level = localStorage.getItem('backgroundLevel') || '1';
+            document.body.style.backgroundImage = `url('background-level-${level}.jpg')`;
+        }
+
+        // Update background on page load
+        updateBackground();
+
+        // Back button functionality
+        document.getElementById('back-button').addEventListener('click', function() {
+            window.history.back();
+        });
+
+        // Connect wallet functionality
         document.getElementById('connect-wallet').addEventListener('click', async function() {
             if (window.TonConnect) {
                 try {
@@ -19,18 +35,18 @@
                         bridgeUrl: 'https://bridge.tonconnect.org', // Ton Connect Bridge URL
                         appMeta: {
                             name: 'Telecoin',
-                            description: 'Your description here',
+                            description: 'Connect your Ton wallet to Telecoin.',
                             url: 'https://tourmaline-gaufre-01a120.netlify.app/', // Your deployed site URL
                             icon: 'https://raw.githubusercontent.com/Ebisa7/Vmhdfhf/main/Photos/970a27e0-0240-4c11-abd7-602e46a58399.jpg-output.png', // URL to your icon
                         },
                     });
 
-                    // Request user to connect their wallet
-                    const { accounts } = await tonConnect.request({ method: 'eth_requestAccounts' });
+                    // Connect wallet
+                    const { accounts } = await tonConnect.connect();
 
                     // Assuming the first account is the one to display
                     const account = accounts[0];
-                    const shortenedAccount = `${account.substring(0, 6)}...${account.slice(-4)}`;
+                    const shortenedAccount = `${account.address.substring(0, 6)}...${account.address.slice(-4)}`;
 
                     // Update button text to show connected wallet address
                     this.textContent = `Connected: ${shortenedAccount}`;
