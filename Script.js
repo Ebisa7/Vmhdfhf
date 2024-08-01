@@ -2,8 +2,13 @@ let coin = parseInt(localStorage.getItem("circleGameCoin")) || 0;
 let boostFactor = parseInt(localStorage.getItem("circleGameBoostFactor")) || 1;
 let battery = parseInt(localStorage.getItem("circleGameBattery")) || 1000;
 let maxBattery = parseInt(localStorage.getItem("circleGameMaxBattery")) || 1000;
-let lastVerifiedTime = parseInt(localStorage.getItem("circleGameLastVerifiedTime")) || 0;
-const VERIFY_INTERVAL = 3600000; // 1 hour in milliseconds
+let verified = JSON.parse(localStorage.getItem("circleGameVerified")) || false;
+
+function checkVerification() {
+    if (!verified) {
+        window.location.href = 'verify.html'; // Redirect to verification page if not verified
+    }
+}
 
 function updateScore() {
     document.getElementById("scoreValue").innerText = coin;
@@ -16,8 +21,8 @@ function updateScore() {
 }
 
 function tapCircle(event) {
-    if (needsVerification()) {
-        initializeRecaptcha();
+    if (!verified) {
+        checkVerification();
         return;
     }
 
@@ -116,35 +121,8 @@ function updateLevel() {
 
 setInterval(recoverBattery, 1000); // Recover 1 battery per second
 
-function needsVerification() {
-    let currentTime = new Date().getTime();
-    if (currentTime - lastVerifiedTime > VERIFY_INTERVAL) {
-        return true;
-    }
-    return false;
-}
-
-function initializeRecaptcha() {
-    grecaptcha.ready(function() {
-        grecaptcha.execute('CHECKBOX', {action: 'homepage'}).then(function(token) {
-            verifyRecaptcha(token);
-        });
-    });
-}
-
-function verifyRecaptcha(token) {
-    // Here you would typically send the token to your server for verification
-    // Simulating verification success
-    lastVerifiedTime = new Date().getTime();
-    localStorage.setItem("circleGameLastVerifiedTime", lastVerifiedTime);
-    alert('Verification successful');
-}
-
 // Initial setup
-updateScore();
-if (needsVerification()) {
-    initializeRecaptcha();
-}
+checkVerification(); // Ensure user is verified before loading the game
 
 // Telegram API integration (simplified example)
 window.Telegram.WebApp.onEvent('mainButtonClicked', function() {
@@ -153,4 +131,5 @@ window.Telegram.WebApp.onEvent('mainButtonClicked', function() {
 
 function syncWithTelegram() {
     // Your code to synchronize data with Telegram
-}
+    }
+                                               
