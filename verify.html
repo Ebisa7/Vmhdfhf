@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verification</title>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+    }
+    #verifyButton {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+<h1>Please Verify</h1>
+<div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div>
+<button id="verifyButton" onclick="verify()">Verify</button>
+<script>
+function verify() {
+    const response = grecaptcha.getResponse();
+    if (response.length === 0) {
+        alert('Please complete the reCAPTCHA');
+        return;
+    }
+    // Here you would typically send the response token to your server for verification
+    // For demonstration, let's assume verification is successful
+    localStorage.setItem("circleGameVerified", true);
+    window.location.href = 'index.html'; // Redirect back to the game page
+}
+</script>
+</body>
+                                                                    </html>
+  
