@@ -32,21 +32,21 @@ body {
     font-size: 40px;
     color: #ffffff;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 #level {
     font-size: 18px;
     color: #ffffff;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    margin-bottom: 10px;
+    margin-bottom: 9px;
 }
 
 .flyingNumber {
     position: absolute;
     font-size: 35px;
     color: #ffffff;
-    animation: flyAndFadeUp 0.1s ease-out forwards; /* Faster animation */
+    animation: flyAndFadeUp 0.3s ease-out forwards; /* Faster animation */
 }
 
 @keyframes flyAndFadeUp {
@@ -106,7 +106,7 @@ body {
     border-radius: 15px;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
-    opacity: 0.8;
+    opacity: 0.1;
     color: white;
     text-align: center;
     display: flex;
