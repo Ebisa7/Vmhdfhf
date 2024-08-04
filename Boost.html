@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Boost</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Boost Page</title>
 <style>
     body {
         display: flex;
@@ -14,9 +14,38 @@
         margin: 0;
         font-family: Arial, sans-serif;
         background: linear-gradient(to bottom, black, #cd7f32);
+        overflow: hidden;
+        padding: 0 10px;
+        color: white;
     }
 
-    .backButton {
+    #container {
+        text-align: center;
+        width: 100%;
+    }
+
+    #coinBalance {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .booster {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .booster:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    #backButton {
         position: absolute;
         top: 10px;
         left: 10px;
@@ -30,177 +59,24 @@
         opacity: 0.8;
         color: white;
     }
-
-    .coinBalance {
-        font-size: 35px;
-        position: absolute;
-        top: 5px;
-        left: 50%;
-        transform: translateX(-50%);
-        text-align: center;
-        background: none;
-        padding: 10px 14px;
-        border-radius: 10px;
-        color: white;
-        backdrop-filter: blur(10px);
-    }
-
-    .boostContainer {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 80%;
-        margin: 10px 0;
-    }
-
-    .boostButton {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 10px;
-        margin: 7px 0;
-        width: 100%;
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        backdrop-filter: blur(50px);
-        transition: background-color 0.2s, color 0.2s;
-        opacity: 0.8;
-        color: white;
-        text-align: left;
-    }
-
-    .boostButton .emoji {
-        font-size: 40px;
-    }
-
-    .boostButton .text {
-        font-size: 18px;
-    }
-
-    .boostButton .cost {
-        display: none;
-    }
-
-    h1 {
-        color: white;
-        margin-top: 1px;
-        text-align: center;
-    }
 </style>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
-<body>
-<h1>Boost Your Score</h1>
-<div class="coinBalance" id="coinBalance">Coins: 0</div>
-<div class="boostContainer">
-    <button class="boostButton" id="boostButton" onclick="confirmBoost('multitap')">
-        <div class="emoji">☝️</div>
-        <div class="text">Multitap</div>
-    </button>
-    <button class="boostButton" id="batteryButton" onclick="confirmBoost('battery')">
-        <div class="emoji">🔋</div>
-        <div class="text">Battery</div>
-    </button>
-    <button class="boostButton" id="rechargeButton" onclick="confirmBoost('recharge')">
-        <div class="emoji">⚡</div>
-        <div class="text">Recharge Speed</div>
-    </button>
+<body data-page="boost">
+<button id="backButton" onclick="Telegram.WebApp.close()">Back</button>
+<div id="container">
+    <h1>Boost Options</h1>
+    <div id="coinBalance">0</div>
+    <div class="booster" id="buyMultitap">
+        🆙 Multitap - Increase coins per tap
+    </div>
+    <div class="booster" id="buyBattery">
+        🔋 Increase Battery Capacity
+    </div>
+    <div class="booster" id="buyRecharge">
+        ⚡ Speed Up Recharge Rate
+    </div>
 </div>
-<button class="backButton" onclick="window.location.href='tap.html'">Back</button>
 
-<script>
-    let coin = parseInt(localStorage.getItem("circleGameCoin")) || 0;
-    let boostFactor = parseInt(localStorage.getItem("circleGameBoostFactor")) || 1;
-    let battery = parseInt(localStorage.getItem("circleGameBattery")) || 1000;
-    let maxBattery = parseInt(localStorage.getItem("circleGameMaxBattery")) || 1000;
-    let rechargeSpeed = parseInt(localStorage.getItem("circleGameRechargeSpeed")) || 1;
-
-    let multitapCosts = [200, 400, 1000, 2000, 4000];
-    let batteryCosts = [5000, 10000, 20000];
-    let rechargeCosts = [3000, 6000, 12000];
-    let multitapIndex = parseInt(localStorage.getItem("circleGameMultitapIndex")) || 0;
-    let batteryIndex = parseInt(localStorage.getItem("circleGameBatteryIndex")) || 0;
-    let rechargeIndex = parseInt(localStorage.getItem("circleGameRechargeIndex")) || 0;
-
-    function confirmBoost(type) {
-        let cost;
-        let description;
-        if (type === 'multitap') {
-            cost = multitapCosts[multitapIndex] || (4000 * (multitapIndex - 4));
-            description = `Multitap\nLevel ${multitapIndex + 1}\nMulti tap lets you earn more coins per tap.\n+1 coins per tap\nCost: ${cost} coins`;
-        } else if (type === 'battery') {
-            cost = batteryCosts[batteryIndex] || (20000 * Math.pow(2, batteryIndex - 2));
-            description = `Battery\nLevel ${batteryIndex + 1}\nIncrease your battery capacity.\n+500 battery\nCost: ${cost} coins`;
-        } else if (type === 'recharge') {
-            cost = rechargeCosts[rechargeIndex] || (12000 * Math.pow(2, rechargeIndex - 2));
-            description = `Recharge Speed\nLevel ${rechargeIndex + 1}\nIncrease your battery recharge speed.\n+1 battery per second\nCost: ${cost} coins`;
-        }
-
-        Telegram.WebApp.showConfirm(description, (confirmed) => {
-            if (confirmed) {
-                buyBoost(type);
-            }
-        });
-    }
-
-    function buyBoost(type) {
-        let cost;
-        if (type === 'multitap') {
-            cost = multitapCosts[multitapIndex] || (4000 * (multitapIndex - 4));
-            if (coin >= cost) {
-                coin -= cost;
-                boostFactor++;
-                multitapIndex++;
-                localStorage.setItem("circleGameCoin", coin);
-                localStorage.setItem("circleGameBoostFactor", boostFactor);
-                localStorage.setItem("circleGameMultitapIndex", multitapIndex);
-                updateBoostButton();
-            } else {
-                Telegram.WebApp.showAlert('Not enough coins!');
-            }
-        } else if (type === 'battery') {
-            cost = batteryCosts[batteryIndex] || (20000 * Math.pow(2, batteryIndex - 2));
-            if (coin >= cost) {
-                coin -= cost;
-                maxBattery += 500;
-                battery = maxBattery;
-                batteryIndex++;
-                localStorage.setItem("circleGameCoin", coin);
-                localStorage.setItem("circleGameMaxBattery", maxBattery);
-                localStorage.setItem("circleGameBattery", battery);
-                localStorage.setItem("circleGameBatteryIndex", batteryIndex);
-                updateBoostButton();
-            } else {
-                Telegram.WebApp.showAlert('Not enough coins!');
-            }
-        } else if (type === 'recharge') {
-            cost = rechargeCosts[rechargeIndex] || (12000 * Math.pow(2, rechargeIndex - 2));
-            if (coin >= cost) {
-                coin -= cost;
-                rechargeSpeed++;
-                rechargeIndex++;
-                localStorage.setItem("circleGameCoin", coin);
-                localStorage.setItem("circleGameRechargeSpeed", rechargeSpeed);
-                localStorage.setItem("circleGameRechargeIndex", rechargeIndex);
-                updateBoostButton();
-            } else {
-                Telegram.WebApp.showAlert('Not enough coins!');
-            }
-        }
-    }
-
-    function updateBoostButton() {
-        let multitapCost = multitapCosts[multitapIndex] || (4000 * (multitapIndex - 4));
-        let batteryCost = batteryCosts[batteryIndex] || (20000 * Math.pow(2, batteryIndex - 2));
-        let rechargeCost = rechargeCosts[rechargeIndex] || (12000 * Math.pow(2, rechargeIndex - 2));
-        document.getElementById("coinBalance").innerText = `Coins: ${coin}`;
-    }
-
-    document.body.style.background = localStorage.getItem("circleGameBackground") || "linear-gradient(to bottom, black, #cd7f32)";
-    updateBoostButton();
-</script>
+<script src="script.js"></script>
 </body>
-  </html>
-  
+</html>
