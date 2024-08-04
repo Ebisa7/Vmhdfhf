@@ -1,143 +1,160 @@
-let coin = parseInt(localStorage.getItem("circleGameCoin")) || 0;
-let boostFactor = parseInt(localStorage.getItem("circleGameBoostFactor")) || 1;
-let battery = parseInt(localStorage.getItem("circleGameBattery")) || 1000;
-let maxBattery = parseInt(localStorage.getItem("circleGameMaxBattery")) || 1000;
-
-function checkVerification() {
-    let verified = JSON.parse(localStorage.getItem("circleGameVerified")) || false;
-    if (!verified) {
-        window.location.href = 'verify.html'; // Redirect to verification page if not verified
-    }
-}
-
-function updateScore() {
-    document.getElementById("scoreValue").innerText = coin;
-    localStorage.setItem("circleGameCoin", coin);
-    localStorage.setItem("circleGameBoostFactor", boostFactor);
-    localStorage.setItem("circleGameBattery", battery);
-    localStorage.setItem("circleGameMaxBattery", maxBattery);
-    updateLevel();
-    updateBattery();
-}
-
-function tapCircle(event) {
-    let verified = JSON.parse(localStorage.getItem("circleGameVerified")) || false;
-    if (!verified) {
-        checkVerification();
-        return;
-    }
-
-    let tapCount = event.touches ? event.touches.length : 1;
-    let tapsNeeded = boostFactor * tapCount;
-    if (battery >= tapsNeeded) {
-        coin += tapsNeeded;
-        battery -= tapsNeeded;
-        updateScore();
-        for (let i = 0; i < tapCount; i++) {
-            let touch = event.touches[i];
-            updateFlyingNumber(boostFactor, touch.clientX, touch.clientY);
-        }
-        apply3DEffect(event.touches[0].clientX, event.touches[0].clientY);
-        bounceCircle();
-    } else {
-        alert('Not enough battery!');
-    }
-}
-
-function updateFlyingNumber(amount, x, y) {
-    let flyingNumber = document.createElement("div");
-    flyingNumber.innerText = amount;
-    flyingNumber.className = "flyingNumber";
-    flyingNumber.style.left = x + 'px';
-    flyingNumber.style.top = y + 'px';
-    document.body.appendChild(flyingNumber);
-
-    setTimeout(function () {
-        flyingNumber.remove();
-    }, 300); // Adjusted for faster removal
-}
-
-function apply3DEffect(x, y) {
-    let rect = document.getElementById("circle").getBoundingClientRect();
-    let centerX = rect.left + rect.width / 2;
-    let centerY = rect.top + rect.height / 2;
-    let deltaX = x - centerX;
-    let deltaY = y - centerY;
-    document.getElementById("circle").style.transform = `rotateX(${deltaY / 10}deg) rotateY(${deltaX / 10}deg)`;
-
-    setTimeout(() => {
-        document.getElementById("circle").style.transform = '';
-    }, 100);
-}
-
-function bounceCircle() {
-    let circle = document.getElementById("circle");
-    circle.style.transition = 'transform 0.1s'; // Smaller bounce effect
-    circle.style.transform = 'scale(0.98)';
-
-    setTimeout(() => {
-        circle.style.transform = 'scale(1)';
-    }, 100);
-}
-
-function updateBattery() {
-    let batteryElement = document.getElementById("battery");
-    batteryElement.style.width = `${(battery / maxBattery) * 100}%`;
-    document.getElementById("batteryText").innerText = `${battery}/${maxBattery}`;
-}
-
-function recoverBattery() {
-    if (battery < maxBattery) {
-        battery++;
-        updateBattery();
-    }
-}
-
-function updateLevel() {
-    let levelElement = document.getElementById("level");
-    let background = "";
-    let levelText = "";
-
-    if (coin < 5000) {
-        levelText = "🥉 Bronze";
-        background = "linear-gradient(to bottom, black, #cd7f32)";
-    } else if (coin < 200000) {
-        levelText = "🥈 Silver";
-        background = "linear-gradient(to bottom, black, silver)";
-    } else if (coin < 500000) {
-        levelText = "🥇 Gold";
-        background = "linear-gradient(to bottom, black, gold)";
-    } else if (coin < 1000000) {
-        levelText = "💎 Diamond";
-        background = "linear-gradient(to bottom, black, #b9f2ff)";
-    } else {
-        levelText = "🏆 Platinum";
-        background = "linear-gradient(to bottom, black, #11bcff)";
-    }
-
-    levelElement.innerText = levelText;
-    document.body.style.background = background;
-    localStorage.setItem("circleGameBackground", background);
-}
-
-setInterval(recoverBattery, 1000); // Recover 1 battery per second
-
-function initializeRecaptcha() {
-    // Display reCAPTCHA when the page loads
-    grecaptcha.execute();
-}
-
-// Initial setup
-checkVerification(); // Ensure user is verified before loading the game
-updateScore();
-initializeRecaptcha();
-
-// Telegram API integration (simplified example)
-window.Telegram.WebApp.onEvent('mainButtonClicked', function() {
-    console.log('Telegram button clicked!');
+// Common code for Telegram WebApp setup
+Telegram.WebApp.onEvent('themeChanged', () => {
+    document.body.style.background = Telegram.WebApp.themeParams.bgColor;
 });
 
-function syncWithTelegram() {
-    // Your code to synchronize data with Telegram
-                                               }
-        
+Telegram.WebApp.ready();
+Telegram.WebApp.setBackgroundColor('#000000'); // Set header color to black
+
+// Determine which page to initialize
+document.addEventListener("DOMContentLoaded", function() {
+    const page = document.body.getAttribute('data-page');
+
+    if (page === 'tap') {
+        initializeTapPage();
+    } else if (page === 'boost') {
+        initializeBoostPage();
+    }
+});
+
+function initializeTapPage() {
+    let coin = parseInt(localStorage.getItem("circleGameCoin")) || 0;
+    let boostFactor = parseInt(localStorage.getItem("circleGameBoostFactor")) || 1;
+    let battery = parseInt(localStorage.getItem("circleGameBattery")) || 1000;
+    const maxBattery = parseInt(localStorage.getItem("circleGameMaxBattery")) || 1000;
+
+    document.getElementById("score").innerText = `Score: ${coin}`;
+    document.getElementById("level").innerText = `Level: ${boostFactor}`;
+    document.getElementById("battery").style.width = `${(battery / maxBattery) * 100}%`;
+
+    function updateBattery() {
+        battery += boostFactor; // Increase battery based on boostFactor
+        if (battery > maxBattery) {
+            battery = maxBattery; // Cap battery at maxBattery
+        }
+        localStorage.setItem("circleGameBattery", battery);
+        document.getElementById("battery").style.width = `${(battery / maxBattery) * 100}%`;
+    }
+
+    function tap() {
+        coin += boostFactor;
+        localStorage.setItem("circleGameCoin", coin);
+        document.getElementById("score").innerText = `Score: ${coin}`;
+        updateBattery();
+    }
+
+    document.getElementById("circle").addEventListener("click", tap);
+
+    // Function to update battery every second based on recharge speed
+    setInterval(() => {
+        let rechargeSpeed = parseInt(localStorage.getItem("circleGameRechargeSpeed")) || 1;
+        battery += rechargeSpeed;
+        if (battery > maxBattery) {
+            battery = maxBattery; // Cap battery at maxBattery
+        }
+        localStorage.setItem("circleGameBattery", battery);
+        document.getElementById("battery").style.width = `${(battery / maxBattery) * 100}%`;
+    }, 1000);
+}
+
+function initializeBoostPage() {
+    let coin = parseInt(localStorage.getItem("circleGameCoin")) || 0;
+    let boostFactor = parseInt(localStorage.getItem("circleGameBoostFactor")) || 1;
+    let battery = parseInt(localStorage.getItem("circleGameBattery")) || 1000;
+    let maxBattery = parseInt(localStorage.getItem("circleGameMaxBattery")) || 1000;
+    let rechargeSpeed = parseInt(localStorage.getItem("circleGameRechargeSpeed")) || 1;
+
+    const multitapCosts = [200, 400, 1000, 2000, 4000];
+    const batteryCosts = [5000, 10000, 20000];
+    const rechargeCosts = [3000, 6000, 12000];
+
+    let multitapIndex = parseInt(localStorage.getItem("circleGameMultitapIndex")) || 0;
+    let batteryIndex = parseInt(localStorage.getItem("circleGameBatteryIndex")) || 0;
+    let rechargeIndex = parseInt(localStorage.getItem("circleGameRechargeIndex")) || 0;
+
+    function confirmBoost(type) {
+        let cost;
+        let description;
+        if (type === 'multitap') {
+            cost = multitapCosts[multitapIndex] || (4000 * (multitapIndex - 4));
+            description = `Multitap\nLevel ${multitapIndex + 1}\nMulti tap lets you earn more coins per tap.\n+1 coins per tap\nCost: ${cost} coins`;
+        } else if (type === 'battery') {
+            cost = batteryCosts[batteryIndex] || (20000 * Math.pow(2, batteryIndex - 2));
+            description = `Battery\nLevel ${batteryIndex + 1}\nIncrease your battery capacity.\n+500 battery\nCost: ${cost} coins`;
+        } else if (type === 'recharge') {
+            cost = rechargeCosts[rechargeIndex] || (12000 * Math.pow(2, rechargeIndex - 2));
+            description = `Recharge Speed\nLevel ${rechargeIndex + 1}\nIncreases your battery recharge rate.\n+1 battery per second\nCost: ${cost} coins`;
+        }
+
+        Telegram.WebApp.showConfirm({
+            text: `${description}\n\nDo you want to proceed?`,
+            okButtonText: 'Yes',
+            cancelButtonText: 'No'
+        }).then(result => {
+            if (result) {
+                buyBoost(type);
+            }
+        });
+    }
+
+    function buyBoost(type) {
+        let cost;
+        if (type === 'multitap') {
+            cost = multitapCosts[multitapIndex] || (4000 * (multitapIndex - 4));
+            if (coin >= cost) {
+                coin -= cost;
+                boostFactor++;
+                multitapIndex++;
+                localStorage.setItem("circleGameCoin", coin);
+                localStorage.setItem("circleGameBoostFactor", boostFactor);
+                localStorage.setItem("circleGameMultitapIndex", multitapIndex);
+                updateBoostButton();
+            } else {
+                Telegram.WebApp.showAlert('Not enough coins!');
+            }
+        } else if (type === 'battery') {
+            cost = batteryCosts[batteryIndex] || (20000 * Math.pow(2, batteryIndex - 2));
+            if (coin >= cost) {
+                coin -= cost;
+                maxBattery += 500;
+                battery = maxBattery; // Full battery
+                batteryIndex++;
+                localStorage.setItem("circleGameCoin", coin);
+                localStorage.setItem("circleGameMaxBattery", maxBattery);
+                localStorage.setItem("circleGameBattery", battery);
+                localStorage.setItem("circleGameBatteryIndex", batteryIndex);
+                updateBoostButton();
+            } else {
+                Telegram.WebApp.showAlert('Not enough coins!');
+            }
+        } else if (type === 'recharge') {
+            cost = rechargeCosts[rechargeIndex] || (12000 * Math.pow(2, rechargeIndex - 2));
+            if (coin >= cost) {
+                coin -= cost;
+                rechargeSpeed++;
+                localStorage.setItem("circleGameCoin", coin);
+                localStorage.setItem("circleGameRechargeSpeed", rechargeSpeed);
+                localStorage.setItem("circleGameRechargeIndex", rechargeIndex);
+                updateBoostButton();
+            } else {
+                Telegram.WebApp.showAlert('Not enough coins!');
+            }
+        }
+    }
+
+    function updateBoostButton() {
+        let multitapCost = multitapCosts[multitapIndex] || (4000 * (multitapIndex - 4));
+        let batteryCost = batteryCosts[batteryIndex] || (20000 * Math.pow(2, batteryIndex - 2));
+        let rechargeCost = rechargeCosts[rechargeIndex] || (12000 * Math.pow(2, rechargeIndex - 2));
+
+        document.getElementById("coinBalance").innerText = `${coin}`; // Just balance, no text
+    }
+
+    document.getElementById("buyMultitap").addEventListener("click", () => confirmBoost('multitap'));
+    document.getElementById("buyBattery").addEventListener("click", () => confirmBoost('battery'));
+    document.getElementById("buyRecharge").addEventListener("click", () => confirmBoost('recharge'));
+
+    // Set up the background and coin balance
+    document.body.style.background = localStorage.getItem("circleGameBackground") || "linear-gradient(to bottom, black, #cd7f32)";
+    updateBoostButton();
+            }
